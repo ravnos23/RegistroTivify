@@ -22,7 +22,7 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Eliminamos directorios corruptos para forzar una instalación limpia
+          # Borrar caché previo para asegurar una build limpia
           rm -rf .buildozer
           buildozer -v android debug
 
