@@ -1,34 +1,61 @@
-name: Build with Buildozer
+name: Build APK
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip autoconf libtool pkg-config zlib1g-dev \
+            libncurses6 libncurses6:i386 cmake libffi-dev libssl-dev \
+            python3-pip openjdk-17-jdk \
+            libc6:i386 libstdc++6:i386 libz1:i386
 
       - name: Install Buildozer
-        run: pip install buildozer
+        run: pip3 install --user buildozer
 
-      - name: Install necessary dependencies
+      - name: Install Android SDK + Build-tools + NDK
         run: |
-          sudo apt update
-          sudo apt install -y libffi-dev libssl-dev
-          # Añadir aquí cualquier otra dependencia que necesites
-
-      - name: Set up Android SDK
-        run: |
-          # Aseguramos que no exista el .buildozer antiguo
           rm -rf .buildozer
-          mkdir -p /home/runner/android-sdk
-          # Aquí se configuran tus rutas y variables si hace falta
+          mkdir -p $HOME/android-sdk
+          cd $HOME/android-sdk
+
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools-temp
+
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools-temp/cmdline-tools/* cmdline-tools/latest/
+
+          chmod +x cmdline-tools/latest/bin/*
+
+          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
+            "platform-tools" \
+            "platforms;android-33" \
+            "build-tools;33.0.2" \
+            "ndk;25.2.9519653"
 
       - name: Build with Buildozer
-        run: buildozer android debug
+        run: |
+          export ANDROIDSDK=$HOME/android-sdk
+          export ANDROIDNDK=$HOME/android-sdk/ndk/25.2.9519653
+          export ANDROIDAPI=33
+          export ANDROIDMINAPI=21
+
+          buildozer -v android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: bin/*.apk
