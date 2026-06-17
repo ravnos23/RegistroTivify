@@ -19,9 +19,7 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Limpiamos cualquier rastro de instalaciones anteriores fallidas
-          buildozer android clean
-          # Ejecutamos la compilación
+          # Hemos quitado el comando 'clean' porque causaba el error de ruta inexistente
           buildozer -v android debug
 
       - name: Upload artifacts
