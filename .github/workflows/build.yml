@@ -13,7 +13,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # CLAVE: Añadimos arquitectura 32-bit para que las herramientas de Android funcionen
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install -y \
@@ -21,27 +20,11 @@ jobs:
             libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev \
             python3-pip openjdk-17-jdk \
             libc6:i386 libncurses5:i386 libstdc++6:i386 libz1:i386
-          
           pip3 install --user --upgrade buildozer
 
       - name: Build with Buildozer
         run: |
-          # Eliminamos directorios antiguos para asegurar una build limpia
           rm -rf .buildozer
-          buildozer -v android debug
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: bin/*.apk          path: bin/*.apk        run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev python3-pip
-          pip3 install --user --upgrade buildozer
-
-      - name: Build with Buildozer
-        run: |
-          # Buildozer ahora usará el SDK que acabamos de instalar manualmente
           buildozer -v android debug
 
       - name: Upload artifacts
