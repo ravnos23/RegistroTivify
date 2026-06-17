@@ -20,18 +20,15 @@ jobs:
           sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev python3-pip openjdk-17-jdk
           pip3 install --user --upgrade buildozer cython
 
-      - name: Link Android SDK
-        run: |
-          mkdir -p /home/runner/.buildozer/android/platform
-          ln -s /usr/local/lib/android/sdk /home/runner/.buildozer/android/platform/android-sdk
-          ln -s /usr/local/lib/android/ndk /home/runner/.buildozer/android/platform/android-ndk
-
       - name: Build with Buildozer
         run: |
+          # Limpiamos el caché local para forzar que use las nuevas rutas
+          rm -rf .buildozer
+          # Ejecutamos con las variables de entorno de rutas configuradas
           buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: package
-          path: bin/*.apk
+          path: bin/*.apk          path: bin/*.apk
