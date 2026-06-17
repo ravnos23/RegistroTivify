@@ -1,98 +1,34 @@
-name: Build APK
+name: Build with Buildozer
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      # -----------------------------------------------------
-      # 1) CACHE DEL ANDROID SDK
-      # -----------------------------------------------------
-      - name: Cache Android SDK
-        uses: actions/cache@v3
-        id: cache-android-sdk
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          path: $HOME/android-sdk
-          key: android-sdk-cache-v1
-
-      # -----------------------------------------------------
-      # 2) CACHE DE PIP
-      # -----------------------------------------------------
-      - name: Cache pip
-        uses: actions/cache@v3
-        id: cache-pip
-        with:
-          path: ~/.cache/pip
-          key: pip-cache-v1
-
-      # -----------------------------------------------------
-      # 3) CACHE DE .buildozer
-      # -----------------------------------------------------
-      - name: Cache Buildozer
-        uses: actions/cache@v3
-        id: cache-buildozer
-        with:
-          path: .buildozer
-          key: buildozer-cache-v2
-
-      - name: Install system dependencies
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install -y \
-            git zip unzip autoconf libtool pkg-config zlib1g-dev \
-            libncurses6 libncurses6:i386 cmake libffi-dev libssl-dev \
-            python3-pip openjdk-17-jdk \
-            libc6:i386 libstdc++6:i386 libz1:i386
+          python-version: '3.x'
 
       - name: Install Buildozer
-        run: pip3 install --user buildozer
+        run: pip install buildozer
 
-      # -----------------------------------------------------
-      # INSTALAR SDK SOLO SI NO ESTÁ EN CACHÉ
-      # -----------------------------------------------------
-      - name: Install Android SDK + Build-tools + NDK
-        if: steps.cache-android-sdk.outputs.cache-hit != 'true'
+      - name: Install necessary dependencies
         run: |
-          mkdir -p $HOME/android-sdk
-          cd $HOME/android-sdk
+          sudo apt update
+          sudo apt install -y libffi-dev libssl-dev
+          # Añadir aquí cualquier otra dependencia que necesites
 
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools-temp
+      - name: Set up Android SDK
+        run: |
+          # Aseguramos que no exista el .buildozer antiguo
+          rm -rf .buildozer
+          mkdir -p /home/runner/android-sdk
+          # Aquí se configuran tus rutas y variables si hace falta
 
-          # Google mete una carpeta extra "cmdline-tools" dentro del ZIP
-          mkdir -p cmdline-tools/latest
-          mv cmdline-tools-temp/cmdline-tools/* cmdline-tools/latest/
-
-          chmod +x cmdline-tools/latest/bin/*
-
-          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
-            "platform-tools" \
-            "platforms;android-33" \
-            "build-tools;33.0.2" \
-            "ndk;25.2.9519653"
-
-      # -----------------------------------------------------
-      # BUILD APK (variables exportadas)
-      # -----------------------------------------------------
       - name: Build with Buildozer
-        run: |
-          export ANDROIDSDK=$HOME/android-sdk
-          export ANDROIDNDK=$HOME/android-sdk/ndk/25.2.9519653
-          export ANDROIDAPI=33
-          export ANDROIDMINAPI=21
-
-          buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk
+        run: buildozer android debug
