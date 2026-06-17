@@ -19,8 +19,8 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Solo construimos, no inicializamos para no borrar tu config
-          buildozer android debug
+          # El 'yes |' acepta automáticamente todas las licencias de Android
+          yes | buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
