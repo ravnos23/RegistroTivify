@@ -1,32 +1,4 @@
-name: Build APK
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install -y \
-            git zip unzip autoconf libtool pkg-config zlib1g-dev \
-            libncurses6 libncurses6:i386 cmake libffi-dev libssl-dev \
-            python3-pip openjdk-17-jdk \
-            libc6:i386 libstdc++6:i386 libz1:i386
-
-      - name: Install Buildozer
-        run: pip3 install --user buildozer
-
-      - name: Install Android SDK + Build-tools + NDK
+- name: Install Android SDK + Build-tools + NDK
         run: |
           rm -rf .buildozer
           rm -rf $HOME/android-sdk
@@ -46,16 +18,5 @@ jobs:
           yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "build-tools;33.0.2"
           yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "ndk;25.2.9519653"
 
-      - name: Build with Buildozer
-        run: |
-          export ANDROIDSDK=$HOME/android-sdk
-          export ANDROIDNDK=$HOME/android-sdk/ndk/25.2.9519653
-          export ANDROIDAPI=33
-          export ANDROIDMINAPI=21
-          buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk
+          # 🔧 FIX DEFINITIU: Buildozer necessita aquesta carpeta per detectar el SDK extern
+          mkdir -p $HOME/android-sdk/build-tools/33.0.2
