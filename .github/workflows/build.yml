@@ -9,7 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Rutas donde GitHub tiene instalado el SDK
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_NDK_HOME: /usr/local/lib/android/ndk
     steps:
@@ -23,18 +22,19 @@ jobs:
 
       - name: Link Android SDK
         run: |
-          # Creamos la estructura de carpetas que Buildozer espera encontrar
           mkdir -p /home/runner/.buildozer/android/platform
-          
-          # Vinculamos el SDK y NDK preinstalados al entorno de Buildozer
           ln -s /usr/local/lib/android/sdk /home/runner/.buildozer/android/platform/android-sdk
           ln -s /usr/local/lib/android/ndk /home/runner/.buildozer/android/platform/android-ndk
 
       - name: Build with Buildozer
         run: |
-          # Ejecución directa. Sin descargas, sin preguntas, sin conflictos.
           buildozer -v android debug
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: bin/*.apk
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
