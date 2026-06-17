@@ -18,13 +18,12 @@ jobs:
             git zip unzip autoconf libtool pkg-config zlib1g-dev \
             libncurses-dev cmake libffi-dev libssl-dev python3-pip \
             openjdk-17-jdk
-          pip3 install --user --upgrade buildozer
+          pip3 install --user --upgrade buildozer cython
 
       - name: Build with Buildozer
         run: |
-          # Borramos caché para asegurar que no queden restos de intentos anteriores
+          # Limpieza profunda
           rm -rf .buildozer
-          # Ejecución limpia
           buildozer -v android debug
 
       - name: Upload artifacts
