@@ -9,11 +9,8 @@ requirements = python3,kivy
 android.permissions = INTERNET
 android.archs = arm64-v8a
 
-# Configuración crítica
-android.sdk = 33
-android.ndk = 25b
-android.accept_sdk_license = True
-android.skip_update = False
+# IMPORTANTE: Eliminamos las líneas "android.sdk" y "android.skip_update"
+# Buildozer 1.6+ detecta y descarga lo que necesita automáticamente.
 
 [buildozer]
 log_level = 2
