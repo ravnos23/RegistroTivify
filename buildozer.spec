@@ -1,10 +1,9 @@
 [app]
-title = TivifyAuto
-package.name = tivifyauto
-package.domain = org.tivify
-source.include_exts = py,png,jpg,kv,atlas
+title = RegistroTivify
+package.name = registrotivify
+package.domain = org.test
+source.include_exts = py
 version = 0.1
-requirements = python3,kivy,requests,certifi
-android.permissions = INTERNET
-[buildozer]
-log_level = 2
+# Librerías necesarias para Kivy y el WebView
+requirements = python3,kivy,kivy-garden.webview
+orientation = portrait
