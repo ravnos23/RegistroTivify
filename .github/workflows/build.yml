@@ -67,8 +67,9 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
           unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools-temp
 
+          # Google mete una carpeta extra "cmdline-tools" dentro del ZIP
           mkdir -p cmdline-tools/latest
-          mv cmdline-tools-temp/* cmdline-tools/latest/
+          mv cmdline-tools-temp/cmdline-tools/* cmdline-tools/latest/
 
           chmod +x cmdline-tools/latest/bin/*
 
