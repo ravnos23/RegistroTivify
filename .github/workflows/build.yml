@@ -22,9 +22,10 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Limpieza absoluta de la caché para evitar conflictos
+          # Limpieza
           rm -rf .buildozer
-          buildozer -v android debug
+          # El 'yes |' acepta automáticamente las licencias del SDK cuando Buildozer las pida
+          yes | buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
