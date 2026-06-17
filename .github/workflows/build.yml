@@ -14,12 +14,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev python3-pip
+          # Añadimos openjdk-17-jdk, necesario para las herramientas de Android
+          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev python3-pip openjdk-17-jdk
           pip3 install --user --upgrade buildozer
 
       - name: Build with Buildozer
         run: |
-          # Hemos quitado el comando 'clean' porque causaba el error de ruta inexistente
+          # Compilación directa
           buildozer -v android debug
 
       - name: Upload artifacts
