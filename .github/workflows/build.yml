@@ -8,33 +8,40 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
-          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y \
-            git zip unzip autoconf libtool pkg-config zlib1g-dev \
-            libncurses6 libncurses6:i386 cmake libffi-dev libssl-dev \
-            python3-pip openjdk-17-jdk \
-            libc6:i386 libstdc++6:i386 libz1:i386
+          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses6 libncurses6:i386 cmake libffi-dev libssl-dev python3-pip openjdk-17-jdk
+          pip3 install --user --upgrade buildozer
 
-      - name: Install Buildozer
-        run: pip3 install --user buildozer
-
-      - name: Install Android SDK + Build-tools + NDK
+      - name: Setup Android SDK manually
         run: |
-          rm -rf .buildozer
-          rm -rf $HOME/android-sdk
-          mkdir -p $HOME/android-sdk
-          cd $HOME/android-sdk
+          mkdir -p $HOME/.android/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip cmdline-tools.zip -d $HOME/.android/cmdline-tools
+          mv $HOME/.android/cmdline-tools/cmdline-tools $HOME/.android/cmdline-tools/latest
+          
+          # Aceptación explícita de licencias (sin pipes que se rompan)
+          yes | $HOME/.android/cmdline-tools/latest/bin/sdkmanager --licenses
+          
+          # Instalación de componentes necesarios
+          $HOME/.android/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools-temp
+      - name: Build with Buildozer
+        env:
+          # Le decimos a Buildozer dónde buscar el SDK que acabamos de preparar
+          ANDROID_HOME: /home/runner/.android
+        run: |
+          buildozer -v android debug
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: bin/*.apk          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools-temp
 
           mkdir -p cmdline-tools/latest
           mv cmdline-tools-temp/cmdline-tools/* cmdline-tools/latest/
