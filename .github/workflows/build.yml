@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Install system dependencies
         run: |
@@ -30,7 +31,6 @@ jobs:
           rm -rf .buildozer
           rm -rf $HOME/android-sdk
           mkdir -p $HOME/android-sdk
-
           cd $HOME/android-sdk
 
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
@@ -52,53 +52,6 @@ jobs:
           export ANDROIDNDK=$HOME/android-sdk/ndk/25.2.9519653
           export ANDROIDAPI=33
           export ANDROIDMINAPI=21
-
-          buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools-temp
-
-          mkdir -p cmdline-tools/latest
-          mv cmdline-tools-temp/cmdline-tools/* cmdline-tools/latest/
-
-          chmod +x cmdline-tools/latest/bin/*
-
-          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "platform-tools"
-          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "platforms;android-33"
-          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "build-tools;33.0.2"
-          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "ndk;25.2.9519653"
-
-      - name: Build with Buildozer
-        run: |
-          export ANDROIDSDK=$HOME/android-sdk
-          export ANDROIDNDK=$HOME/android-sdk/ndk/25.2.9519653
-          export ANDROIDAPI=33
-          export ANDROIDMINAPI=21
-
-          buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload          mkdir -p cmdline-tools/latest
-          mv cmdline-tools-temp/cmdline-tools/* cmdline-tools/latest/
-
-          chmod +x cmdline-tools/latest/bin/*
-
-          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
-            "platform-tools" \
-            "platforms;android-33" \
-            "build-tools;33.0.2" \
-            "ndk;25.2.9519653"
-
-      - name: Build with Buildozer
-        run: |
-          export ANDROIDSDK=$HOME/android-sdk
-          export ANDROIDNDK=$HOME/android-sdk/ndk/25.2.9519653
-          export ANDROIDAPI=33
-          export ANDROIDMINAPI=21
-
           buildozer -v android debug
 
       - name: Upload APK
