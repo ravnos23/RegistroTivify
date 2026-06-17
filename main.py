@@ -1,15 +1,9 @@
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy_garden.webview import WebView
+from kivy.uix.label import Label
 
-class TivifyApp(App):
+class TestApp(App):
     def build(self):
-        layout = BoxLayout()
-        # WebView carga la web oficial
-        wv = WebView(url="https://www.tivify.es/es/registro")
-        layout.add_widget(wv)
-        return layout
+        return Label(text="Hola, esto funciona")
 
 if __name__ == '__main__':
-    TivifyApp().run()
-  
+    TestApp().run()
