@@ -1,23 +1,19 @@
 [app]
-title = RegistroTivify
-package.name = registrotivify
+title = MiApp
+package.name = miapp
 package.domain = org.test
-source.dir = .
-source.include_exts = py
+source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 requirements = python3,kivy
-orientation = portrait
-fullscreen = 0
 android.permissions = INTERNET
-android.api = 33
-android.minapi = 21
-android.ndk = 25b
+android.archs = arm64-v8a
+
+# --- LÍNEAS CRÍTICAS PARA QUE NO FALLE ---
+android.skip_update = True
 android.sdk = 33
-android.build_tools_version = 33.0.2
-# Forzamos a Buildozer a usar la carpeta que creamos en el workflow
-android.sdk_path = /home/runner/.android
-android.ndk_path = /home/runner/.android/ndk
+android.ndk = 25b
+# ------------------------------------------
+
 [buildozer]
 log_level = 2
-android.sdk_path = /home/runner/android-sdk
-android.ndk_path = /home/runner/android-sdk/ndk/
+warn_on_root = 1
