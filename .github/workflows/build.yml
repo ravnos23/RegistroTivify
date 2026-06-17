@@ -19,7 +19,8 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # El -v hace que Buildozer sea más hablador y nos diga el error real
+          # Ejecutamos Buildozer sin el 'yes |' para evitar el Broken Pipe
+          # Añadimos -v para que el log nos diga exactamente qué hace
           buildozer -v android debug
 
       - name: Upload artifacts
