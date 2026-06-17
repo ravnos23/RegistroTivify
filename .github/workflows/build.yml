@@ -14,14 +14,12 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev python3-pip
+          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev python3-pip
           pip3 install --user --upgrade buildozer
 
       - name: Build with Buildozer
         run: |
-          buildozer init
-          sed -i 's/#android.api = 27/android.api = 33/' buildozer.spec
-          sed -i 's/#android.minapi = 21/android.minapi = 21/' buildozer.spec
+          # Solo construimos, no inicializamos para no borrar tu config
           buildozer android debug
 
       - name: Upload artifacts
