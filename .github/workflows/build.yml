@@ -21,14 +21,10 @@ jobs:
           pip3 install --user --upgrade buildozer cython
 
       - name: Build with Buildozer
-        run: |
-          # Limpiamos el caché local para forzar que use las nuevas rutas
-          rm -rf .buildozer
-          # Ejecutamos con las variables de entorno de rutas configuradas
-          buildozer -v android debug
+        run: buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: package
-          path: bin/*.apk          path: bin/*.apk
+          path: bin/*.apk
