@@ -9,10 +9,13 @@ requirements = python3,kivy
 android.permissions = INTERNET
 android.archs = arm64-v8a
 
-# Configuración obligatoria para evitar errores de descarga en CI
-android.skip_update = True
+# --- CONFIGURACIÓN DE VERSIONES ESTABLES ---
 android.sdk = 33
 android.ndk = 25b
+# Esto hace que Buildozer acepte la licencia internamente sin errores de "pipe"
+android.accept_sdk_license = True
+# Permitimos que busque el SDK, pero restringido a la versión 33 que configuramos
+android.skip_update = False
 
 [buildozer]
 log_level = 2
