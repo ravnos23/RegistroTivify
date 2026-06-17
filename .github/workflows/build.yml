@@ -8,10 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
@@ -20,15 +21,38 @@ jobs:
             libncurses6 libncurses6:i386 cmake libffi-dev libssl-dev \
             python3-pip openjdk-17-jdk \
             libc6:i386 libstdc++6:i386 libz1:i386
-          pip3 install --user --upgrade buildozer
+
+      - name: Install Buildozer
+        run: pip3 install --user buildozer
+
+      - name: Install Android SDK + Build-tools + NDK
+        run: |
+          mkdir -p $HOME/android-sdk
+          cd $HOME/android-sdk
+
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/* cmdline-tools/latest/ || true
+
+          yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
+            "platform-tools" \
+            "platforms;android-33" \
+            "build-tools;33.0.2" \
+            "ndk;25.2.9519653"
 
       - name: Build with Buildozer
+        env:
+          ANDROIDSDK: $HOME/android-sdk
+          ANDROIDNDK: $HOME/android-sdk/ndk/25.2.9519653
+          ANDROIDAPI: 33
+          ANDROIDMINAPI: 21
         run: |
           rm -rf .buildozer
           buildozer -v android debug
 
-      - name: Upload artifacts
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: apk
           path: bin/*.apk
