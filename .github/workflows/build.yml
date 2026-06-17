@@ -40,7 +40,7 @@ jobs:
         id: cache-buildozer
         with:
           path: .buildozer
-          key: buildozer-cache-v1
+          key: buildozer-cache-v2
 
       - name: Install system dependencies
         run: |
