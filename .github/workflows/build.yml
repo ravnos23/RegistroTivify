@@ -22,7 +22,7 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Borrar caché previo para asegurar una build limpia
+          # Limpieza absoluta de la caché para evitar conflictos
           rm -rf .buildozer
           buildozer -v android debug
 
