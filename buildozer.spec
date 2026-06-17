@@ -10,3 +10,5 @@ android.permissions = INTERNET
 android.archs = arm64-v8a
 
 # No ponemos rutas aquí para que Buildozer use las variables de entorno
+android.sdk_path = /usr/local/lib/android/sdk
+android.ndk_path = /usr/local/lib/android/ndk
