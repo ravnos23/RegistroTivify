@@ -9,27 +9,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Cache Buildozer
         uses: actions/cache@v4
         with:
           path: .buildozer
-          # Esta línea crea una caché única basada en tu archivo de configuración.
-          # Si cambias las dependencias en buildozer.spec, se creará una caché nueva.
           key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            buildozer-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev python3-pip openjdk-17-jdk
+          pip3 install --user --upgrade buildozer cython
 
       - name: Build with Buildozer
-        uses: kivy/buildozer-action@v1
-        with:
-          buildozer_version: stable
-        env:
-          # Estas variables aseguran que la Action use la carpeta local que caché gestiona
-          ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
-          ANDROID_NDK_HOME: /home/runner/.buildozer/android/platform/android-ndk
+        run: buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
