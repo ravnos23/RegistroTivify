@@ -24,6 +24,7 @@ jobs:
         run: |
           # Limpieza profunda
           rm -rf .buildozer
+          # Ejecución sin forzar nada. Dejamos que Buildozer autodetecte
           buildozer -v android debug
 
       - name: Upload artifacts
