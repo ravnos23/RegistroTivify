@@ -8,6 +8,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Definimos las rutas del SDK preinstalado en GitHub
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_NDK_HOME: /usr/local/lib/android/ndk
     steps:
       - uses: actions/checkout@v4
 
@@ -17,22 +21,21 @@ jobs:
           sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev python3-pip openjdk-17-jdk
           pip3 install --user --upgrade buildozer cython
 
-      - name: Prepare Android SDK
+      - name: Link Android SDK
         run: |
-          # Instalamos los build-tools 33.0.0 específicamente antes de buildozer
-          # Esto evita que buildozer intente bajar la v37 y falle por licencias
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          yes | sdkmanager --sdk_root=$ANDROID_HOME "build-tools;33.0.0" "platforms;android-33"
-          
+          # Creamos los directorios que Buildozer espera
+          mkdir -p /home/runner/.buildozer/android/platform
+          # Creamos un enlace simbólico (un "atajo") para que Buildozer use el SDK del sistema
+          ln -s /usr/local/lib/android/sdk /home/runner/.buildozer/android/platform/android-sdk
+          ln -s /usr/local/lib/android/ndk /home/runner/.buildozer/android/platform/android-ndk
+
       - name: Build with Buildozer
         run: |
-          # Limpieza
-          rm -rf .buildozer
-          # Ejecución
           buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: package
+          path: bin/*.apk          name: package
           path: bin/*.apk
