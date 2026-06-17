@@ -14,8 +14,10 @@ android.minapi = 21
 android.ndk = 25b
 android.sdk = 33
 android.build_tools_version = 33.0.2
-
+# Forzamos a Buildozer a usar la carpeta que creamos en el workflow
+android.sdk_path = /home/runner/.android
+android.ndk_path = /home/runner/.android/ndk
 [buildozer]
 log_level = 2
 android.sdk_path = /home/runner/android-sdk
-android.ndk_path = /home/runner/android-sdk/ndk/25.2.9519653
+android.ndk_path = /home/runner/android-sdk/ndk/
