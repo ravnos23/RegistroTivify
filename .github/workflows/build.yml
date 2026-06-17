@@ -12,6 +12,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # -----------------------------------------------------
+      # 1) CACHE DEL ANDROID SDK
+      # -----------------------------------------------------
+      - name: Cache Android SDK
+        uses: actions/cache@v3
+        id: android-cache
+        with:
+          path: $HOME/android-sdk
+          key: android-sdk-cache-v1
+
+      # -----------------------------------------------------
+      # 2) CACHE DE PIP
+      # -----------------------------------------------------
+      - name: Cache pip
+        uses: actions/cache@v3
+        id: pip-cache
+        with:
+          path: ~/.cache/pip
+          key: pip-cache-v1
+
+      # -----------------------------------------------------
+      # 3) CACHE DE .buildozer
+      # -----------------------------------------------------
+      - name: Cache Buildozer
+        uses: actions/cache@v3
+        id: buildozer-cache
+        with:
+          path: .buildozer
+          key: buildozer-cache-v1
+
       - name: Install system dependencies
         run: |
           sudo dpkg --add-architecture i386
@@ -25,15 +55,22 @@ jobs:
       - name: Install Buildozer
         run: pip3 install --user buildozer
 
+      # -----------------------------------------------------
+      # INSTALAR SDK SOLO SI NO ESTÁ EN CACHÉ
+      # -----------------------------------------------------
       - name: Install Android SDK + Build-tools + NDK
+        if: steps.android-cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p $HOME/android-sdk
           cd $HOME/android-sdk
 
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools
+          unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools-temp
+
           mkdir -p cmdline-tools/latest
-          mv cmdline-tools/* cmdline-tools/latest/ || true
+          mv cmdline-tools-temp/* cmdline-tools/latest/
+
+          chmod +x cmdline-tools/latest/bin/*
 
           yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
             "platform-tools" \
@@ -41,6 +78,9 @@ jobs:
             "build-tools;33.0.2" \
             "ndk;25.2.9519653"
 
+      # -----------------------------------------------------
+      # BUILD APK
+      # -----------------------------------------------------
       - name: Build with Buildozer
         env:
           ANDROIDSDK: $HOME/android-sdk
@@ -48,7 +88,6 @@ jobs:
           ANDROIDAPI: 33
           ANDROIDMINAPI: 21
         run: |
-          rm -rf .buildozer
           buildozer -v android debug
 
       - name: Upload APK
