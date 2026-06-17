@@ -23,18 +23,20 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
           unzip cmdline-tools.zip -d $HOME/.android/cmdline-tools
           mv $HOME/.android/cmdline-tools/cmdline-tools $HOME/.android/cmdline-tools/latest
-          
-          # Aceptación explícita de licencias (sin pipes que se rompan)
           yes | $HOME/.android/cmdline-tools/latest/bin/sdkmanager --licenses
-          
-          # Instalación de componentes necesarios
           $HOME/.android/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
       - name: Build with Buildozer
         env:
-          # Le decimos a Buildozer dónde buscar el SDK que acabamos de preparar
           ANDROID_HOME: /home/runner/.android
         run: |
+          buildozer -v android debug
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: bin/*.apk        run: |
           buildozer -v android debug
 
       - name: Upload artifacts
