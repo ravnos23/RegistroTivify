@@ -17,9 +17,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             git zip unzip autoconf libtool pkg-config zlib1g-dev \
-            libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev \
+            libncurses6 libncurses6:i386 cmake libffi-dev libssl-dev \
             python3-pip openjdk-17-jdk \
-            libc6:i386 libncurses5:i386 libstdc++6:i386 libz1:i386
+            libc6:i386 libstdc++6:i386 libz1:i386
           pip3 install --user --upgrade buildozer
 
       - name: Build with Buildozer
