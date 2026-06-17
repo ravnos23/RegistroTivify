@@ -9,6 +9,8 @@ requirements = python3,kivy
 android.permissions = INTERNET
 android.archs = arm64-v8a
 
-# No ponemos rutas aquí para que Buildozer use las variables de entorno
-android.sdk_path = /usr/local/lib/android/sdk
-android.ndk_path = /usr/local/lib/android/ndk
+# Esto es lo único necesario para que no pregunte nada y sea permisivo
+android.accept_sdk_license = True
+# Si Buildozer necesita una versión, la bajará él mismo a su carpeta local
+android.sdk = 33
+android.ndk = 25b
