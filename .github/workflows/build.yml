@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: package
-          path: bin/*.apk        run: |
+          path: bin/*.apk          path: bin/*.apk        run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev python3-pip
           pip3 install --user --upgrade buildozer
